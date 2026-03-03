@@ -2,6 +2,12 @@
 
 All notable changes to **UnitySkills** will be documented in this file.
 
+## [1.5.4] - 2026-03-03
+
+### Changed
+
+- 版本号升级至 v1.5.4
+
 ## [1.5.3] - 2026-03-01
 
 ### Security
