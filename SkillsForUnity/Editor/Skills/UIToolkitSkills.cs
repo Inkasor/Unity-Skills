@@ -374,6 +374,17 @@ namespace UnitySkills
             var cc = settings.colorClearValue;
 
 #if UNITY_6000_0_OR_NEWER
+            // renderMode, colliderUpdateMode, colliderIsTrigger are internal — read via SerializedObject
+            var so = new SerializedObject(settings);
+            var rmProp = so.FindProperty("m_RenderMode");
+            int rmVal = rmProp != null ? rmProp.intValue : 0;
+            string renderModeStr = rmVal == 1 ? "WorldSpace" : "ScreenSpaceOverlay";
+            var cuProp = so.FindProperty("m_ColliderUpdateMode");
+            int cuVal = cuProp != null ? cuProp.intValue : 0;
+            string colliderUpdateStr = cuVal == 2 ? "KeepExistingCollider" : cuVal == 1 ? "Match2DDocumentRect" : "Match3DBoundingBox";
+            var ctProp = so.FindProperty("m_ColliderIsTrigger");
+            bool colliderIsTriggerVal = ctProp != null ? ctProp.boolValue : true;
+
             return new
             {
                 path = assetPath,
@@ -400,14 +411,14 @@ namespace UnitySkills
                 clearColor = settings.clearColor,
                 colorClearValue = new { r = cc.r, g = cc.g, b = cc.b, a = cc.a },
                 clearDepthStencil = settings.clearDepthStencil,
-                // Unity 6+ properties
-                renderMode = settings.renderMode.ToString(),
+                // Unity 6+ properties (renderMode/collider* read via SerializedObject)
+                renderMode = renderModeStr,
                 forceGammaRendering = settings.forceGammaRendering,
                 bindingLogLevel = settings.bindingLogLevel.ToString(),
-                colliderUpdateMode = settings.colliderUpdateMode.ToString(),
-                colliderIsTrigger = settings.colliderIsTrigger,
+                colliderUpdateMode = colliderUpdateStr,
+                colliderIsTrigger = colliderIsTriggerVal,
                 vertexBudget = settings.vertexBudget,
-                textureSlotCount = settings.textureSlotCount
+                textureSlotCount = (int)settings.textureSlotCount
             };
 #else
             return new
@@ -716,16 +727,42 @@ namespace UnitySkills
 
             // --- Unity 6+ properties ---
 #if UNITY_6000_0_OR_NEWER
-            if (!string.IsNullOrEmpty(renderMode) && System.Enum.TryParse<PanelRenderMode>(renderMode, true, out var parsedRenderMode))
-                settings.renderMode = parsedRenderMode;
             if (forceGammaRendering.HasValue) settings.forceGammaRendering = forceGammaRendering.Value;
             if (!string.IsNullOrEmpty(bindingLogLevel) && System.Enum.TryParse<UnityEngine.UIElements.BindingLogLevel>(bindingLogLevel, true, out var parsedLogLevel))
                 settings.bindingLogLevel = parsedLogLevel;
-            if (!string.IsNullOrEmpty(colliderUpdateMode) && System.Enum.TryParse<PanelColliderUpdateMode>(colliderUpdateMode, true, out var parsedCollider))
-                settings.colliderUpdateMode = parsedCollider;
-            if (colliderIsTrigger.HasValue) settings.colliderIsTrigger = colliderIsTrigger.Value;
-            if (vertexBudget.HasValue)     settings.vertexBudget = vertexBudget.Value;
-            if (textureSlotCount.HasValue) settings.textureSlotCount = textureSlotCount.Value;
+            if (vertexBudget.HasValue)     settings.vertexBudget = (uint)vertexBudget.Value;
+            if (textureSlotCount.HasValue) settings.textureSlotCount = (TextureSlotCount)textureSlotCount.Value;
+
+            // renderMode, colliderUpdateMode, colliderIsTrigger are internal — use SerializedObject
+            if (!string.IsNullOrEmpty(renderMode) || !string.IsNullOrEmpty(colliderUpdateMode) || colliderIsTrigger.HasValue)
+            {
+                var so = new SerializedObject(settings);
+                if (!string.IsNullOrEmpty(renderMode))
+                {
+                    var prop = so.FindProperty("m_RenderMode");
+                    if (prop != null)
+                    {
+                        if (renderMode.Equals("ScreenSpaceOverlay", System.StringComparison.OrdinalIgnoreCase)) prop.intValue = 0;
+                        else if (renderMode.Equals("WorldSpace", System.StringComparison.OrdinalIgnoreCase)) prop.intValue = 1;
+                    }
+                }
+                if (!string.IsNullOrEmpty(colliderUpdateMode))
+                {
+                    var prop = so.FindProperty("m_ColliderUpdateMode");
+                    if (prop != null)
+                    {
+                        if (colliderUpdateMode.Equals("Match3DBoundingBox", System.StringComparison.OrdinalIgnoreCase)) prop.intValue = 0;
+                        else if (colliderUpdateMode.Equals("Match2DDocumentRect", System.StringComparison.OrdinalIgnoreCase)) prop.intValue = 1;
+                        else if (colliderUpdateMode.Equals("KeepExistingCollider", System.StringComparison.OrdinalIgnoreCase)) prop.intValue = 2;
+                    }
+                }
+                if (colliderIsTrigger.HasValue)
+                {
+                    var prop = so.FindProperty("m_ColliderIsTrigger");
+                    if (prop != null) prop.boolValue = colliderIsTrigger.Value;
+                }
+                so.ApplyModifiedProperties();
+            }
 #endif
 
             return null; // success
