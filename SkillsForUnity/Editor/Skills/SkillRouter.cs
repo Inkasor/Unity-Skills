@@ -69,7 +69,11 @@ namespace UnitySkills
             "light_add_probe_group", "light_add_reflection_probe",
             "animator_add_transition", "animator_add_state",
             "component_copy", "component_set_enabled",
-            "prefab_create_variant"
+            "prefab_create_variant",
+            "uitk_create_uss", "uitk_create_uxml", "uitk_write_file", "uitk_delete_file",
+            "uitk_create_document", "uitk_set_document", "uitk_create_panel_settings",
+            "uitk_set_panel_settings",
+            "uitk_create_from_template", "uitk_create_batch"
         };
 
         // JSON 序列化设置，禁用 Unicode 转义确保中文正确显示

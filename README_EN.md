@@ -1,9 +1,12 @@
 # 🎮 UnitySkills
 
+<p align="center">
+  <img src="docs/Unity-Skills-H.png" alt="Unity-Skills" width="800">
+</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Unity-2021.3%2B-black?style=for-the-badge&logo=unity" alt="Unity">
-  <img src="https://img.shields.io/badge/Skills-431-green?style=for-the-badge" alt="Skills">
+  <img src="https://img.shields.io/badge/Skills-446-green?style=for-the-badge" alt="Skills">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-orange?style=for-the-badge" alt="License"></a>
 </p>
 
@@ -25,26 +28,27 @@ This project is a deep refactoring and feature extension based on the excellent 
 ## 🚀 Core Features
 
 - ⚡ **Ultimate Efficiency**: Supports **Result Truncation** and **SKILL.md** optimization to maximize token savings.
-- 🛠️ **Comprehensive Toolkit**: Built-in 431 Skills with **Batch** operations, significantly reducing HTTP overhead and improving execution efficiency.
+- 🛠️ **Comprehensive Toolkit**: Built-in 446 Skills with **Batch** operations, significantly reducing HTTP overhead and improving execution efficiency.
 - 🛡️ **Safety First**: Supports **Transactional** (atomic operations) with automatic rollback on failure, leaving no residue in scenes.
 - 🌍 **Multi-Instance Support**: Automatic port discovery and global registry, enabling simultaneous control of multiple Unity projects.
 - 🤖 **Deep Integration**: Exclusive support for **Antigravity Slash Commands**, unlocking the `/unity-skills` interactive experience.
 - 🔌 **Full Environment Compatibility**: Perfect support for Claude Code, Antigravity, Gemini CLI, and other mainstream AI terminals.
 - 🎥 **Cinemachine 2.x/3.x Dual Version Support**: Auto-detects Unity version and installs the corresponding Cinemachine, supporting **MixingCamera**, **ClearShot**, **TargetGroup**, **Spline**, and other advanced camera controls.
 - 🔗 **Stable Long-Running Tasks**: User-configurable request timeout (default 60 minutes), automatic port recovery after Domain Reload, Python client auto-syncs timeout from server, fully resolving disconnection issues during long tasks.
+- **UI Toolkit** fully supported, with guided generation of elegant UXML and USS templates to assist UI development.
 
 ---
 
 ## 🏗️ Supported IDEs / Terminals
 
-This project has been deeply optimized for the following environments to ensure a continuous and stable development experience:
+This project has been deeply optimized for the following environments to ensure a continuous and stable development experience (tools not listed below are not necessarily unsupported — they just lack a quick installer; use ***Custom Installation*** to the corresponding directory):
 
 | AI Terminal | Support Status | Special Features |
 | :--- | :---: | :--- |
-| **Antigravity** | ✅ Fully Supported | Supports `/unity-skills` slash commands with native workflow integration. |
-| **Claude Code** | ✅ Fully Supported | Intelligent Skill intent recognition, supports complex multi-step automation. |
-| **Gemini CLI** | ✅ Fully Supported | Experimental support, adapted to the latest `experimental.skills` specification. |
-| **Codex** | ✅ Fully Supported | Supports `$skill` explicit invocation and implicit intent recognition. |
+| **Antigravity** | ✅ Supported | Supports `/unity-skills` slash commands with native workflow integration. |
+| **Claude Code** | ✅ Supported | Intelligent Skill intent recognition, supports complex multi-step automation. |
+| **Gemini CLI** | ✅ Supported | Experimental support, adapted to the latest `experimental.skills` specification. |
+| **Codex** | ✅ Supported | Supports `$skill` explicit invocation and implicit intent recognition. |
 
 ---
 
@@ -130,7 +134,7 @@ If you're using other tools that support Skills, install according to the Skills
 
 ---
 
-## 📦 Skills Category Overview (431)
+## 📦 Skills Category Overview (446)
 
 | Category | Count | Core Functions |
 | :--- | :---: | :--- |
@@ -140,6 +144,7 @@ If you're using other tools that support Skills, install according to the Skills
 | **GameObject** | 18 | Create/Find/Transform sync/Batch operations/Hierarchy management/Rename/Duplicate |
 | **Scene** | 18 | Multi-scene load/Unload/Activate/Screenshot/Context/Dependency analysis/Report export |
 | **UI System** | 16 | Canvas/Button/Text/Slider/Toggle/Anchors/Layout/Alignment/Distribution |
+| **UI Toolkit** | 15 | UXML/USS file management/UIDocument/PanelSettings full property read-write/Template generation/Structure inspection/Batch create |
 | **Asset** | 15 | Asset import/Delete/Move/Copy/Search/Folders/Batch operations/Refresh |
 | **Editor** | 12 | Play mode/Selection/Undo-Redo/Context retrieval/Menu execution |
 | **Timeline** | 12 | Track create/Delete/Clip management/Playback control/Binding/Duration |
@@ -182,7 +187,7 @@ If you're using other tools that support Skills, install according to the Skills
 .
 ├── SkillsForUnity/                 # Unity Editor Plugin (UPM Package)
 │   ├── package.json                # com.besty.unity-skills
-│   └── Editor/Skills/              # Core Skill Logic (37 *Skills.cs files, 431 Skills)
+│   └── Editor/Skills/              # Core Skill Logic (37 *Skills.cs files, 446 Skills)
 │       ├── SkillsHttpServer.cs     # HTTP Server Core (Producer-Consumer)
 │       ├── SkillRouter.cs          # Request Routing & Reflection-based Skill Discovery
 │       ├── WorkflowManager.cs      # Persistent Workflow (Task/Session/Snapshot)
@@ -194,7 +199,7 @@ If you're using other tools that support Skills, install according to the Skills
 │       ├── CinemachineSkills.cs    # Cinemachine 2.x/3.x (23 skills)
 │       ├── WorkflowSkills.cs       # Workflow Undo/Rollback (22 skills)
 │       ├── PerceptionSkills.cs     # Scene Understanding (9 skills)
-│       └── ...                     # 431 Skills source code
+│       └── ...                     # 446 Skills source code
 ├── unity-skills/                   # Cross-platform AI Skill Template (Distributed to AI Tools)
 │   ├── SKILL.md                    # Main Skill Definitions (AI-readable)
 │   ├── scripts/

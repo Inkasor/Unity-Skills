@@ -2,6 +2,19 @@
 
 All notable changes to **UnitySkills** will be documented in this file.
 
+## [1.6.1] - 2026-03-09
+
+### Fixed
+- **Unity 2021.3 / 2022.3 early patch compatibility**: `PanelSettings.referenceSpritePixelsPerUnit` does not exist in Unity 2021.3 ~ 2022.3 early patches (e.g. 2022.3.17). Changed to reflection-based access to avoid CS1061 compile errors across all Unity versions.
+
+## [1.6.0] - 2026-03-06
+
+### Added
+- **UI Toolkit Module**: New `UIToolkitSkills.cs` with 15 `uitk_*` skills covering UXML/USS file operations, UIDocument scene management, PanelSettings full property create/get/set (27+ properties including Unity 6 World Space/collider support), UXML structure inspection, 6 built-in templates (menu/hud/dialog/settings/inventory/list), and batch file creation.
+
+### Changed
+- **Skills count**: Total skills increased from 431 to 446.
+
 ## [1.5.5] - 2026-03-05
 
 ### Changed
