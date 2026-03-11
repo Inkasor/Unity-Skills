@@ -6,7 +6,8 @@
         "Unity.Timeline",
         "Cinemachine",
         "Unity.Cinemachine",
-        "Unity.Splines"
+        "Unity.Splines",
+        "Unity.AI.Navigation"
     ],
     "includePlatforms": ["Editor"],
     "excludePlatforms": [],

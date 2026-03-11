@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEditor;
-using UnityEditor.AI;
+using Unity.AI.Navigation;
+using System.Linq;
 
 namespace UnitySkills
 {
@@ -10,18 +11,58 @@ namespace UnitySkills
     /// </summary>
     public static class NavMeshSkills
     {
-        [UnitySkill("navmesh_bake", "Bake the NavMesh (Synchronous). Warning: Can be slow.")]
+        [UnitySkill("navmesh_bake", "Bake all NavMeshSurface components in the current scene. Warning: Can be slow.")]
         public static object NavMeshBake()
         {
-            UnityEditor.AI.NavMeshBuilder.BuildNavMesh();
-            return new { success = true, message = "NavMesh baked successfully" };
+            var surfaces = FindSurfaces();
+            if (surfaces.Length == 0)
+                return new { success = false, error = "No NavMeshSurface found in scene" };
+
+            foreach (var surface in surfaces)
+            {
+                surface.BuildNavMesh();
+                EditorUtility.SetDirty(surface);
+                if (surface.navMeshData != null)
+                    EditorUtility.SetDirty(surface.navMeshData);
+            }
+
+            return new
+            {
+                success = true,
+                surfaceCount = surfaces.Length,
+                surfaces = surfaces.Select(surface => surface.gameObject.name).ToArray(),
+                message = $"NavMesh baked for {surfaces.Length} surface(s)"
+            };
         }
 
-        [UnitySkill("navmesh_clear", "Clear the NavMesh data")]
+        [UnitySkill("navmesh_clear", "Remove baked NavMesh data from all NavMeshSurface components in the current scene")]
         public static object NavMeshClear()
         {
-            UnityEditor.AI.NavMeshBuilder.ClearAllNavMeshes();
-            return new { success = true, message = "NavMesh cleared" };
+            var surfaces = FindSurfaces();
+            if (surfaces.Length == 0)
+                return new { success = false, error = "No NavMeshSurface found in scene" };
+
+            int clearedCount = 0;
+            foreach (var surface in surfaces)
+            {
+                if (surface.navMeshData == null)
+                    continue;
+
+                surface.RemoveData();
+                surface.navMeshData = null;
+                EditorUtility.SetDirty(surface);
+                clearedCount++;
+            }
+
+            return new
+            {
+                success = true,
+                clearedCount,
+                surfaceCount = surfaces.Length,
+                message = clearedCount > 0
+                    ? $"Cleared NavMesh data from {clearedCount} surface(s)"
+                    : "No baked NavMesh data found on surfaces"
+            };
         }
 
         [UnitySkill("navmesh_calculate_path", "Calculate a path between two points. Returns: {status, distance, cornerCount, corners}")]
@@ -48,7 +89,7 @@ namespace UnitySkills
             }
             
             var corners = new System.Collections.Generic.List<object>();
-            foreach(var c in path.corners)
+            foreach (var c in path.corners)
             {
                 corners.Add(new { x = c.x, y = c.y, z = c.z });
             }
@@ -151,6 +192,13 @@ namespace UnitySkills
                 success = true, agentRadius = settings.agentRadius, agentHeight = settings.agentHeight,
                 agentSlope = settings.agentSlope, agentClimb = settings.agentClimb
             };
+        }
+
+        private static NavMeshSurface[] FindSurfaces()
+        {
+            return UnityObjectCompat.FindObjects<NavMeshSurface>(includeInactive: true)
+                .Where(surface => surface.gameObject.scene.isLoaded)
+                .ToArray();
         }
     }
 }

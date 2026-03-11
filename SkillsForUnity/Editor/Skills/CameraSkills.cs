@@ -195,7 +195,7 @@ namespace UnitySkills
         [UnitySkill("camera_list", "List all cameras in the scene")]
         public static object CameraList()
         {
-            var cameras = Object.FindObjectsOfType<Camera>();
+            var cameras = UnityObjectCompat.FindObjects<Camera>();
             var list = cameras.Select(c => new
             {
                 name = c.gameObject.name, instanceId = c.gameObject.GetInstanceID(),

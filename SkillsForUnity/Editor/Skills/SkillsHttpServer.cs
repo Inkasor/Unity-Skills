@@ -74,9 +74,6 @@ namespace UnitySkills
         private static string PREF_AUTO_START => PrefKey("AutoStart");
         private static string PREF_TOTAL_PROCESSED => PrefKey("TotalProcessed");
         private static string PREF_LAST_PORT => PrefKey("LastPort");
-        
-        // Domain Reload tracking
-        private static bool _domainReloadPending = false;
 
         public static bool IsRunning => _isRunning;
         public static string Url => _prefix;
@@ -217,8 +214,6 @@ namespace UnitySkills
         /// </summary>
         private static void OnBeforeAssemblyReload()
         {
-            _domainReloadPending = true;
-
             // Persist the "should run" state before domain is destroyed
             EditorPrefs.SetBool(PREF_SERVER_SHOULD_RUN, _isRunning);
 
@@ -245,8 +240,6 @@ namespace UnitySkills
         /// </summary>
         private static void OnAfterAssemblyReload()
         {
-            _domainReloadPending = false;
-            
             // Restore statistics from before reload
             var savedTotal = EditorPrefs.GetString(PREF_TOTAL_PROCESSED, "0");
             if (long.TryParse(savedTotal, out long parsed))

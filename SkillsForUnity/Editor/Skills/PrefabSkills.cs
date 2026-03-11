@@ -249,7 +249,7 @@ namespace UnitySkills
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
             if (prefab == null) return new { error = $"Prefab not found: {prefabPath}" };
 
-            var allObjects = Object.FindObjectsOfType<GameObject>();
+            var allObjects = UnityObjectCompat.FindObjects<GameObject>();
             var instances = allObjects
                 .Where(go => PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(go) == prefabPath)
                 .Take(limit)

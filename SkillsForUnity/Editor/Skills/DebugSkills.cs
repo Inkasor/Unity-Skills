@@ -234,7 +234,8 @@ namespace UnitySkills
         public static object DebugGetDefines()
         {
             var group = EditorUserBuildSettings.selectedBuildTargetGroup;
-            var defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(group);
+            var buildTarget = UnityObjectCompat.GetActiveNamedBuildTarget();
+            var defines = PlayerSettings.GetScriptingDefineSymbols(buildTarget);
             return new { success = true, buildTargetGroup = group.ToString(), defines };
         }
 
@@ -242,7 +243,8 @@ namespace UnitySkills
         public static object DebugSetDefines(string defines)
         {
             var group = EditorUserBuildSettings.selectedBuildTargetGroup;
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(group, defines);
+            var buildTarget = UnityObjectCompat.GetActiveNamedBuildTarget();
+            PlayerSettings.SetScriptingDefineSymbols(buildTarget, defines);
             return new { success = true, buildTargetGroup = group.ToString(), defines };
         }
 

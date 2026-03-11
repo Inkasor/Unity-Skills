@@ -16,7 +16,7 @@ namespace UnitySkills
 
         private class BookmarkData
         {
-            public int[] selectedInstanceIds;
+            public UnityEngine.Object[] selectedObjects;
             public Vector3? sceneViewPosition;
             public Quaternion? sceneViewRotation;
             public float? sceneViewSize;
@@ -32,7 +32,7 @@ namespace UnitySkills
 
             var bookmark = new BookmarkData
             {
-                selectedInstanceIds = Selection.instanceIDs,
+                selectedObjects = Selection.objects,
                 note = note,
                 createdAt = System.DateTime.Now
             };
@@ -52,7 +52,7 @@ namespace UnitySkills
             {
                 success = true,
                 bookmark = bookmarkName,
-                selectedCount = bookmark.selectedInstanceIds.Length,
+                selectedCount = bookmark.selectedObjects.Length,
                 hasSceneView = sceneView != null,
                 note
             };
@@ -65,10 +65,10 @@ namespace UnitySkills
                 return new { success = false, error = $"Bookmark '{bookmarkName}' not found" };
 
             // Restore selection
-            var validIds = bookmark.selectedInstanceIds
-                .Where(id => EditorUtility.InstanceIDToObject(id) != null)
+            var validObjects = bookmark.selectedObjects
+                .Where(obj => obj != null)
                 .ToArray();
-            Selection.instanceIDs = validIds;
+            Selection.objects = validObjects;
 
             // Restore scene view
             if (bookmark.sceneViewPosition.HasValue)
@@ -89,7 +89,7 @@ namespace UnitySkills
             {
                 success = true,
                 bookmark = bookmarkName,
-                restoredSelection = validIds.Length,
+                restoredSelection = validObjects.Length,
                 note = bookmark.note
             };
         }
@@ -100,7 +100,7 @@ namespace UnitySkills
             var list = _bookmarks.Select(kv => new
             {
                 name = kv.Key,
-                selectedCount = kv.Value.selectedInstanceIds.Length,
+                selectedCount = kv.Value.selectedObjects.Length,
                 hasSceneView = kv.Value.sceneViewPosition.HasValue,
                 note = kv.Value.note,
                 createdAt = kv.Value.createdAt.ToString("HH:mm:ss")
@@ -194,7 +194,7 @@ namespace UnitySkills
 
             UnityEngine.Object target = null;
             if (instanceId != 0)
-                target = EditorUtility.InstanceIDToObject(instanceId);
+                target = UnityObjectCompat.GetObjectByInstanceId(instanceId);
             else if (!string.IsNullOrEmpty(name))
                 target = GameObjectFinder.Find(name: name);
 
@@ -274,7 +274,7 @@ namespace UnitySkills
 
             UnityEngine.Object target = null;
             if (instanceId != 0)
-                target = EditorUtility.InstanceIDToObject(instanceId);
+                target = UnityObjectCompat.GetObjectByInstanceId(instanceId);
             else if (!string.IsNullOrEmpty(name))
                 target = GameObjectFinder.Find(name: name);
 

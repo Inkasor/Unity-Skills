@@ -5,6 +5,73 @@ using System.Collections.Generic;
 
 namespace UnitySkills
 {
+    public static class UnityObjectCompat
+    {
+        public static T[] FindObjects<T>(bool includeInactive = false) where T : UnityEngine.Object
+        {
+            var inactiveMode = includeInactive ? FindObjectsInactive.Include : FindObjectsInactive.Exclude;
+            return Object.FindObjectsByType<T>(inactiveMode, FindObjectsSortMode.None);
+        }
+
+        public static UnityEngine.Object[] FindObjects(System.Type type, bool includeInactive = false)
+        {
+            return Resources.FindObjectsOfTypeAll(type)
+                .Where(obj => obj != null)
+                .Where(obj =>
+                {
+                    if (obj is GameObject go)
+                        return go.scene.isLoaded && (includeInactive || go.activeInHierarchy);
+
+                    if (obj is Component component)
+                        return component.gameObject.scene.isLoaded && (includeInactive || component.gameObject.activeInHierarchy);
+
+                    return !EditorUtility.IsPersistent(obj);
+                })
+                .ToArray();
+        }
+
+        public static T FindFirstObject<T>(bool includeInactive = false) where T : UnityEngine.Object
+        {
+            return FindObjects<T>(includeInactive).FirstOrDefault();
+        }
+
+        public static UnityEngine.Object FindFirstObject(System.Type type, bool includeInactive = false)
+        {
+            return FindObjects(type, includeInactive).FirstOrDefault();
+        }
+
+        public static UnityEngine.Object GetObjectByInstanceId(int instanceId)
+        {
+            if (instanceId == 0)
+                return null;
+
+            return Resources.FindObjectsOfTypeAll<UnityEngine.Object>()
+                .FirstOrDefault(obj => obj != null && obj.GetInstanceID() == instanceId);
+        }
+
+        public static T GetObjectByInstanceId<T>(int instanceId) where T : UnityEngine.Object
+        {
+            return GetObjectByInstanceId(instanceId) as T;
+        }
+
+        public static UnityEditor.Build.NamedBuildTarget GetActiveNamedBuildTarget()
+        {
+            return UnityEditor.Build.NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+        }
+
+        public static LightingSettings GetLightingSettingsOrDefaults()
+        {
+            try
+            {
+                return Lightmapping.lightingSettings ?? Lightmapping.lightingSettingsDefaults;
+            }
+            catch
+            {
+                return Lightmapping.lightingSettingsDefaults;
+            }
+        }
+    }
+
     /// <summary>
     /// Parameter validation helper - returns error object or null
     /// </summary>
@@ -147,7 +214,7 @@ namespace UnitySkills
             // Priority 1: Instance ID (most precise, works regardless of selection/focus)
             if (instanceId != 0)
             {
-                var obj = EditorUtility.InstanceIDToObject(instanceId);
+                var obj = UnityObjectCompat.GetObjectByInstanceId(instanceId);
                 if (obj is GameObject go)
                     return go;
             }
@@ -286,7 +353,7 @@ namespace UnitySkills
             var type = ComponentSkills.FindComponentType(componentType);
             if (type == null) return null;
 
-            var comp = Object.FindObjectOfType(type) as Component;
+            var comp = UnityObjectCompat.FindFirstObject(type) as Component;
             return comp?.gameObject;
         }
 
@@ -395,7 +462,7 @@ namespace UnitySkills
                 var type = ComponentSkills.FindComponentType(componentType);
                 if (type != null)
                 {
-                    var withComp = Object.FindObjectsOfType(type)
+                    var withComp = UnityObjectCompat.FindObjects(type)
                         .OfType<Component>()
                         .Take(3)
                         .Select(c => $"'{c.gameObject.name}' has {type.Name}");
@@ -434,7 +501,7 @@ namespace UnitySkills
                 if (go != null) return go;
                 
                 // Find any camera
-                var cam = Object.FindObjectOfType<Camera>();
+                var cam = UnityObjectCompat.FindFirstObject<Camera>();
                 if (cam != null) return cam.gameObject;
             }
 

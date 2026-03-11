@@ -331,6 +331,7 @@ namespace UnitySkills
         [UnitySkill("project_get_player_settings", "Get Player Settings")]
         public static object ProjectGetPlayerSettings()
         {
+            var buildTarget = UnityObjectCompat.GetActiveNamedBuildTarget();
             return new
             {
                 success = true,
@@ -340,8 +341,8 @@ namespace UnitySkills
                 defaultScreenWidth = PlayerSettings.defaultScreenWidth,
                 defaultScreenHeight = PlayerSettings.defaultScreenHeight,
                 fullscreen = PlayerSettings.fullScreenMode.ToString(),
-                apiCompatibility = PlayerSettings.GetApiCompatibilityLevel(EditorUserBuildSettings.selectedBuildTargetGroup).ToString(),
-                scriptingBackend = PlayerSettings.GetScriptingBackend(EditorUserBuildSettings.selectedBuildTargetGroup).ToString()
+                apiCompatibility = PlayerSettings.GetApiCompatibilityLevel(buildTarget).ToString(),
+                scriptingBackend = PlayerSettings.GetScriptingBackend(buildTarget).ToString()
             };
         }
 

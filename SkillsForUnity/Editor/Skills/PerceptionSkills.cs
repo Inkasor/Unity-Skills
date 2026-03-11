@@ -36,7 +36,7 @@ namespace UnitySkills
         public static object SceneSummarize(bool includeComponentStats = true, int topComponentsLimit = 10)
         {
             var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-            var allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>();
+            var allObjects = UnityObjectCompat.FindObjects<GameObject>();
             var rootObjects = scene.GetRootGameObjects();
 
             int totalObjects = allObjects.Length;
@@ -281,7 +281,7 @@ namespace UnitySkills
                 center = new Vector3(x, y, z);
             }
 
-            var allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>();
+            var allObjects = UnityObjectCompat.FindObjects<GameObject>();
             float radiusSq = radius * radius;
 
             Type filterType = null;
@@ -330,7 +330,7 @@ namespace UnitySkills
         [UnitySkill("scene_materials", "Get an overview of all materials and shaders used in the current scene")]
         public static object SceneMaterials(bool includeProperties = false)
         {
-            var renderers = UnityEngine.Object.FindObjectsOfType<Renderer>();
+            var renderers = UnityObjectCompat.FindObjects<Renderer>();
             var materialMap = new Dictionary<string, MaterialInfo>();
 
             foreach (var renderer in renderers)
@@ -352,13 +352,13 @@ namespace UnitySkills
                         if (includeProperties && mat.shader != null)
                         {
                             var props = new List<object>();
-                            int count = ShaderUtil.GetPropertyCount(mat.shader);
+                            int count = mat.shader.GetPropertyCount();
                             for (int i = 0; i < count; i++)
                             {
                                 props.Add(new
                                 {
-                                    name = ShaderUtil.GetPropertyName(mat.shader, i),
-                                    type = ShaderUtil.GetPropertyType(mat.shader, i).ToString()
+                                    name = mat.shader.GetPropertyName(i),
+                                    type = mat.shader.GetPropertyType(i).ToString()
                                 });
                             }
                             materialMap[key].properties = props;
@@ -412,7 +412,7 @@ namespace UnitySkills
             bool includeReferences = true)
         {
             var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-            var totalObjects = UnityEngine.Object.FindObjectsOfType<GameObject>().Length;
+            var totalObjects = UnityObjectCompat.FindObjects<GameObject>().Length;
 
             // Determine roots
             Transform[] roots;
@@ -1059,7 +1059,7 @@ namespace UnitySkills
             if (!string.IsNullOrEmpty(savePath) && Validate.SafePath(savePath, "savePath") is object pathErr) return pathErr;
 
             var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-            var allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>();
+            var allObjects = UnityObjectCompat.FindObjects<GameObject>();
 
             var edges = CollectDependencyEdges(allObjects);
 
@@ -1226,7 +1226,7 @@ namespace UnitySkills
         [UnitySkill("scene_tag_layer_stats", "Get Tag/Layer usage stats and find potential issues (untagged objects, unused layers)")]
         public static object SceneTagLayerStats()
         {
-            var allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>();
+            var allObjects = UnityObjectCompat.FindObjects<GameObject>();
             var tagCounts = new Dictionary<string, int>();
             var layerCounts = new Dictionary<string, int>();
             int untaggedCount = 0;
@@ -1257,24 +1257,24 @@ namespace UnitySkills
         public static object ScenePerformanceHints()
         {
             var hints = new List<object>();
-            var allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>();
+            var allObjects = UnityObjectCompat.FindObjects<GameObject>();
 
             // 1. Realtime shadow lights
-            var lights = UnityEngine.Object.FindObjectsOfType<Light>();
+            var lights = UnityObjectCompat.FindObjects<Light>();
             var shadowLights = lights.Where(l => l.shadows != LightShadows.None).ToArray();
             if (shadowLights.Length > 4)
                 hints.Add(new { priority = 1, category = "Lighting", issue = $"{shadowLights.Length} shadow-casting lights",
                     suggestion = "Reduce to ≤4 or use baked lighting", fixSkill = "light_set_properties" });
 
             // 2. Non-static renderers
-            var renderers = UnityEngine.Object.FindObjectsOfType<Renderer>();
+            var renderers = UnityObjectCompat.FindObjects<Renderer>();
             int nonStaticCount = renderers.Count(r => !r.gameObject.isStatic);
             if (nonStaticCount > 100)
                 hints.Add(new { priority = 2, category = "Batching", issue = $"{nonStaticCount} non-static renderers",
                     suggestion = "Mark static objects with optimize_set_static_flags", fixSkill = "optimize_set_static_flags" });
 
             // 3. High-poly meshes without LOD
-            var meshFilters = UnityEngine.Object.FindObjectsOfType<MeshFilter>();
+            var meshFilters = UnityObjectCompat.FindObjects<MeshFilter>();
             var highPoly = meshFilters.Where(mf => mf.sharedMesh != null && mf.sharedMesh.triangles.Length / 3 > 10000
                 && mf.GetComponent<LODGroup>() == null).ToArray();
             if (highPoly.Length > 0)
@@ -1290,7 +1290,7 @@ namespace UnitySkills
                     suggestion = "Consolidate materials", fixSkill = "optimize_find_duplicate_materials" });
 
             // 5. Particle systems
-            var particles = UnityEngine.Object.FindObjectsOfType<ParticleSystem>();
+            var particles = UnityObjectCompat.FindObjects<ParticleSystem>();
             if (particles.Length > 20)
                 hints.Add(new { priority = 3, category = "Particles", issue = $"{particles.Length} particle systems",
                     suggestion = "Consider reducing or pooling particle systems", fixSkill = (string)null });

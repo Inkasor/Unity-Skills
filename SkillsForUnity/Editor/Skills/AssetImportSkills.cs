@@ -248,12 +248,14 @@ namespace UnitySkills
                     case "polygon": importer.spriteImportMode = SpriteImportMode.Polygon; break;
                 }
             }
+            var warnings = new List<string>();
             if (pixelsPerUnit.HasValue) importer.spritePixelsPerUnit = pixelsPerUnit.Value;
-            if (!string.IsNullOrEmpty(packingTag)) importer.spritePackingTag = packingTag;
+            if (!string.IsNullOrEmpty(packingTag))
+                warnings.Add("spritePackingTag is obsolete in Unity 6. Use a Sprite Atlas instead.");
             if (pivotX != null && pivotY != null)
                 importer.spritePivot = new Vector2(float.Parse(pivotX, System.Globalization.CultureInfo.InvariantCulture), float.Parse(pivotY, System.Globalization.CultureInfo.InvariantCulture));
             importer.SaveAndReimport();
-            return new { success = true, assetPath, spriteMode = importer.spriteImportMode.ToString(), pixelsPerUnit = importer.spritePixelsPerUnit };
+            return new { success = true, assetPath, spriteMode = importer.spriteImportMode.ToString(), pixelsPerUnit = importer.spritePixelsPerUnit, warnings };
         }
 
         [UnitySkill("texture_get_import_settings", "Get current texture import settings")]

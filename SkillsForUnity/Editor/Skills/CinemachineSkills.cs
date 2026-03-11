@@ -602,7 +602,7 @@ namespace UnitySkills
 #if UNITY_2023_1_OR_NEWER
             return Object.FindObjectsByType<T>(FindObjectsSortMode.None);
 #else
-            return Object.FindObjectsOfType<T>();
+            return UnityObjectCompat.FindObjects<T>();
 #endif
         }
 

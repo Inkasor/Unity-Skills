@@ -255,7 +255,7 @@ namespace UnitySkills
             if (!string.IsNullOrEmpty(tag))
                 results = GameObject.FindGameObjectsWithTag(tag);
             else
-                results = Object.FindObjectsOfType<GameObject>();
+                results = UnityObjectCompat.FindObjects<GameObject>();
 
             // Filter by Name (Regex or Contains)
             if (!string.IsNullOrEmpty(name))

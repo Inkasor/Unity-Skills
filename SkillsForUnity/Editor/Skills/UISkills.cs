@@ -567,7 +567,7 @@ namespace UnitySkills
         [UnitySkill("ui_find_all", "Find all UI elements in the scene")]
         public static object UIFindAll(string uiType = null, int limit = 50)
         {
-            var canvases = UnityEngine.Object.FindObjectsOfType<Canvas>();
+            var canvases = UnityObjectCompat.FindObjects<Canvas>();
             var results = new System.Collections.Generic.List<object>();
 
             foreach (var canvas in canvases)
@@ -604,7 +604,7 @@ namespace UnitySkills
             }
 
             // Find existing canvas
-            var canvas = UnityEngine.Object.FindObjectOfType<Canvas>();
+            var canvas = UnityObjectCompat.FindFirstObject<Canvas>();
             if (canvas != null) return canvas.gameObject;
 
             // Create new canvas

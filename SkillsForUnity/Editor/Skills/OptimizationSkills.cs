@@ -112,7 +112,7 @@ namespace UnitySkills
         [UnitySkill("optimize_analyze_scene", "Analyze scene for performance bottlenecks (high-poly meshes, excessive materials)")]
         public static object OptimizeAnalyzeScene(int polyThreshold = 10000, int materialThreshold = 5)
         {
-            var renderers = Object.FindObjectsOfType<Renderer>();
+            var renderers = UnityObjectCompat.FindObjects<Renderer>();
             var issues = new List<object>();
             int totalTris = 0, totalMats = 0;
 
@@ -247,7 +247,7 @@ namespace UnitySkills
         [UnitySkill("optimize_analyze_overdraw", "Analyze transparent objects that may cause overdraw")]
         public static object OptimizeAnalyzeOverdraw(int limit = 50)
         {
-            var renderers = Object.FindObjectsOfType<Renderer>();
+            var renderers = UnityObjectCompat.FindObjects<Renderer>();
             var transparent = new List<object>();
 
             foreach (var r in renderers)

@@ -29,7 +29,7 @@ namespace UnitySkills
             var issues = new List<ValidationIssue>();
             var scene = SceneManager.GetActiveScene();
             var rootObjects = scene.GetRootGameObjects();
-            var allObjects = Object.FindObjectsOfType<GameObject>();
+            var allObjects = UnityObjectCompat.FindObjects<GameObject>();
 
             // Check for missing scripts
             if (checkMissingScripts)
@@ -132,7 +132,7 @@ namespace UnitySkills
             var results = new List<object>();
 
             // Search in scene
-            var sceneObjects = Object.FindObjectsOfType<GameObject>();
+            var sceneObjects = UnityObjectCompat.FindObjects<GameObject>();
             foreach (var go in sceneObjects)
             {
                 var components = go.GetComponents<Component>();
@@ -363,7 +363,7 @@ namespace UnitySkills
         public static object ValidateFixMissingScripts(bool dryRun = true)
         {
             var fixedObjects = new List<object>();
-            var sceneObjects = Object.FindObjectsOfType<GameObject>();
+            var sceneObjects = UnityObjectCompat.FindObjects<GameObject>();
 
             foreach (var go in sceneObjects)
             {
@@ -399,7 +399,7 @@ namespace UnitySkills
         public static object ValidateMissingReferences(int limit = 50)
         {
             var results = new List<object>();
-            foreach (var go in Object.FindObjectsOfType<GameObject>())
+            foreach (var go in UnityObjectCompat.FindObjects<GameObject>())
             {
                 if (results.Count >= limit) break;
                 foreach (var comp in go.GetComponents<Component>())
@@ -425,7 +425,7 @@ namespace UnitySkills
         [UnitySkill("validate_mesh_collider_convex", "Find non-convex MeshColliders (potential performance issue)")]
         public static object ValidateMeshColliderConvex(int limit = 50)
         {
-            var colliders = Object.FindObjectsOfType<MeshCollider>()
+            var colliders = UnityObjectCompat.FindObjects<MeshCollider>()
                 .Where(mc => !mc.convex)
                 .Take(limit)
                 .Select(mc => new { gameObject = mc.gameObject.name, path = GameObjectFinder.GetPath(mc.gameObject),

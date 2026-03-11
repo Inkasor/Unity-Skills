@@ -162,7 +162,7 @@ namespace UnitySkills
                 ? Resources.FindObjectsOfTypeAll<GameObject>()
                     .Where(go => !EditorUtility.IsPersistent(go) && go.hideFlags == HideFlags.None)
                     .ToArray()
-                : Object.FindObjectsOfType<GameObject>();
+                : UnityObjectCompat.FindObjects<GameObject>();
 
             foreach (var go in allObjects)
             {
@@ -433,7 +433,7 @@ namespace UnitySkills
         {
             var allObjects = includeInactive
                 ? Resources.FindObjectsOfTypeAll<GameObject>().Where(go => !EditorUtility.IsPersistent(go) && go.hideFlags == HideFlags.None).ToArray()
-                : Object.FindObjectsOfType<GameObject>();
+                : UnityObjectCompat.FindObjects<GameObject>();
             int totalRemoved = 0;
             foreach (var go in allObjects)
             {

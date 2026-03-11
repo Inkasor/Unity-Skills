@@ -536,7 +536,7 @@ namespace UnitySkills
         {
             if (instanceId != 0)
             {
-                var obj = EditorUtility.InstanceIDToObject(instanceId) as GameObject;
+                var obj = UnityObjectCompat.GetObjectByInstanceId<GameObject>(instanceId);
                 return obj?.GetComponent<Terrain>();
             }
 
@@ -547,7 +547,7 @@ namespace UnitySkills
             }
 
             // Return first terrain in scene
-            return Object.FindObjectOfType<Terrain>();
+            return UnityObjectCompat.FindFirstObject<Terrain>();
         }
     }
 }

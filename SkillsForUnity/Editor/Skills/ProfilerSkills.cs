@@ -44,11 +44,11 @@ namespace UnitySkills
             float fps = frameTime > 0 ? 1000f / frameTime : 0f;
 
             int visibleSkinnedMeshes = 0;
-            foreach (var smr in UnityEngine.Object.FindObjectsOfType<SkinnedMeshRenderer>())
+            foreach (var smr in UnityObjectCompat.FindObjects<SkinnedMeshRenderer>())
                 if (smr.isVisible) visibleSkinnedMeshes++;
 
             int visibleAnimators = 0;
-            foreach (var anim in UnityEngine.Object.FindObjectsOfType<Animator>())
+            foreach (var anim in UnityObjectCompat.FindObjects<Animator>())
             {
                 var renderer = anim.GetComponent<Renderer>();
                 if (renderer != null && renderer.isVisible) visibleAnimators++;

@@ -32,7 +32,7 @@ namespace UnitySkills
             if (type == null) 
                 return new { success = false, error = $"Component type '{componentName}' not found. Try: Light, MeshRenderer, Camera, etc." };
 
-            var components = Object.FindObjectsOfType(type);
+            var components = UnityObjectCompat.FindObjects(type);
             
             foreach (var comp in components)
             {
@@ -182,7 +182,7 @@ namespace UnitySkills
             }
             if (!string.IsNullOrEmpty(sourceName))
             {
-                sources.AddRange(Object.FindObjectsOfType<GameObject>().Where(g => g.name.Contains(sourceName)));
+                sources.AddRange(UnityObjectCompat.FindObjects<GameObject>().Where(g => g.name.Contains(sourceName)));
             }
             sources = sources.Distinct().ToList();
 
@@ -486,7 +486,7 @@ namespace UnitySkills
         {
             var type = GetTypeByName(componentName);
             if (type == null) return new { error = $"Component type '{componentName}' not found" };
-            var components = Object.FindObjectsOfType(type);
+            var components = UnityObjectCompat.FindObjects(type);
             var gameObjects = components.OfType<Component>().Select(c => c.gameObject).Distinct().ToArray();
             Selection.objects = gameObjects;
             return new { success = true, selected = gameObjects.Length, component = componentName };

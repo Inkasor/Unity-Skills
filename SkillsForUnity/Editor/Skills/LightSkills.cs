@@ -174,7 +174,7 @@ namespace UnitySkills
         [UnitySkill("light_find_all", "Find all lights in the scene")]
         public static object LightFindAll(string lightType = null, int limit = 50)
         {
-            var lights = Object.FindObjectsOfType<Light>();
+            var lights = UnityObjectCompat.FindObjects<Light>();
 
             if (!string.IsNullOrEmpty(lightType))
             {
@@ -338,13 +338,14 @@ namespace UnitySkills
         [UnitySkill("light_get_lightmap_settings", "Get Lightmap baking settings")]
         public static object LightGetLightmapSettings()
         {
+            var lightingSettings = UnityObjectCompat.GetLightingSettingsOrDefaults();
             return new
             {
                 success = true,
-                bakedGI = Lightmapping.bakedGI,
-                realtimeGI = Lightmapping.realtimeGI,
-                lightmapSize = LightmapEditorSettings.maxAtlasSize,
-                lightmapPadding = LightmapEditorSettings.padding,
+                bakedGI = lightingSettings.bakedGI,
+                realtimeGI = lightingSettings.realtimeGI,
+                lightmapSize = lightingSettings.lightmapMaxSize,
+                lightmapPadding = lightingSettings.lightmapPadding,
                 isRunning = Lightmapping.isRunning,
                 lightmapCount = LightmapSettings.lightmaps.Length
             };
